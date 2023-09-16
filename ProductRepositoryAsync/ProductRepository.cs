@@ -18,6 +18,12 @@ namespace ProductRepositoryAsync
 
         public async Task<int> AddProductAsync(Product product)
         {
+            ValidateProduct(product);
+            return await this.AddProductToDatabaseAsync(product);
+        }
+
+        private static void ValidateProduct(Product product)
+        {
             if (string.IsNullOrWhiteSpace(product.Name))
             {
                 throw new ArgumentException("Name and Category should not be empty or whitespace only.", nameof(product));
@@ -37,7 +43,10 @@ namespace ProductRepositoryAsync
             {
                 throw new ArgumentException("UnitsInStock should be greater or equal to zero.", nameof(product));
             }
+        }
 
+        private async Task<int> AddProductToDatabaseAsync(Product product)
+        {
             OperationResult collectionExistResult = await this.database.IsCollectionExistAsync(this.productCollectionName, out bool collectionExists);
 
             if (collectionExistResult == OperationResult.ConnectionIssue)
@@ -97,7 +106,9 @@ namespace ProductRepositoryAsync
             return productId;
         }
 
+#pragma warning disable SA1202
         public async Task<Product> GetProductAsync(int productId)
+#pragma warning restore SA1202
         {
             _ = new Product
             {
@@ -207,6 +218,13 @@ namespace ProductRepositoryAsync
 
         public async Task UpdateProductAsync(Product product)
         {
+            ValidateProductParameters(product);
+
+            await this.UpdateProductInDatabaseAsync(product);
+        }
+
+        private static void ValidateProductParameters(Product product)
+        {
             if (string.IsNullOrWhiteSpace(product.Name) || string.IsNullOrWhiteSpace(product.Category))
             {
                 throw new ArgumentException("Name and Category should not be empty or whitespace only.", nameof(product));
@@ -221,7 +239,10 @@ namespace ProductRepositoryAsync
             {
                 throw new ArgumentException("UnitsInStock should be greater or equal to zero.", nameof(product));
             }
+        }
 
+        private async Task UpdateProductInDatabaseAsync(Product product)
+        {
             OperationResult collectionExistResult = await this.database.IsCollectionExistAsync(this.productCollectionName, out bool collectionExists);
 
             if (collectionExistResult == OperationResult.ConnectionIssue)
