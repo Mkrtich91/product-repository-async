@@ -6,8 +6,12 @@ namespace ProductRepositoryAsync.Tests
 {
     public class Database : IDatabase
     {
+#pragma warning disable IDE0090
         private readonly object lockObject = new object();
+#pragma warning restore IDE0090
+#pragma warning disable IDE0090
         private readonly Dictionary<string, Collection> database = new Dictionary<string, Collection>();
+#pragma warning restore IDE0090
 
         public bool IsCollectionExistAsyncFailure { get; init; }
 
@@ -138,7 +142,9 @@ namespace ProductRepositoryAsync.Tests
                 return Task.FromResult(OperationResult.InvalidCollectionName);
             }
 
+#pragma warning disable IDE0018
             Collection? collection;
+#pragma warning restore IDE0018
 
             lock (this.lockObject)
             {
